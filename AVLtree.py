@@ -176,7 +176,7 @@ class AVL(BST):
                 if actual.left.get_balance_factor() == -1:
                     self.left_rotation(actual.left.right)
                 self.right_rotation(actual.left)
-            elif actual.get_balance_factor == -2:
+            elif actual.get_balance_factor() == -2:
                 if actual.right.get_balance_factor() == 1:
                     self.right_rotation(actual.right.left)
                 self.left_rotation(actual.right)
