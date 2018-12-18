@@ -184,9 +184,11 @@ class AVL(BST):
                 actual = actual.parent
 
 class MyAVLNode(AVLNode):
-    def __init__(self, value):
+    def __init__(self, value, nationality):
         super().__init__(value)
         self.number_of_overruns = 0
+        self.nationality = nationality
+        
 
 class MyAVL(AVL):
     def __init__(self):
@@ -245,6 +247,33 @@ class MyAVL(AVL):
         if subroot is None:
             return 0
         return subroot.number_of_overruns + self.go_through_all(subroot.left) + self.go_through_all(subroot.right)
+
+def make_statistics_n2(results):
+    nationalities = {}
+    for r in results:
+        nationalities[r[1]] = True
+    nations = list(nationalities)
+    numres = 0
+    result = {}
+    # fill result with zeros
+    for n in nations:
+        result[n] = {}
+        for nat in nations:
+            result[n][nat] = 0
+    i = 0
+    while i < len(results):
+        j = i + 1
+        while j < len(results):
+            if results[i][0] > results[j][0]:
+                numres += 1
+                result[results[i][1]][results[j][1]] += 1
+            j += 1
+        i += 1
+    return numres, result
+def make_statistics(results):
+    return make_statistics_n2(results)
+
+
 
 def make_stats(input):
     i = len(input) - 1
