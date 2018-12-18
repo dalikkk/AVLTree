@@ -240,3 +240,9 @@ class MyAVL(AVL):
                 self.left_rotation(actual.right)
             else:
                 actual = actual.parent
+
+    def go_through_all(self, subroot):
+        if subroot is None:
+            return 0
+        return subroot.number_of_overruns + self.go_through_all(subroot.left) + self.go_through_all(subroot.right)
+
