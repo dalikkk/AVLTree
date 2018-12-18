@@ -186,6 +186,7 @@ class AVL(BST):
 class MyAVLNode(AVLNode):
     def __init__(self):
         super().__init__()
+        number_of_overruns = 0
 
 class MyAVL(AVL):
     def __init__(self):
@@ -198,13 +199,17 @@ class MyAVL(AVL):
             return
         actual = self.root
         child = None
+        overruns = 0
         while True:
             if value > actual.value:
+                # add overruns
+                overruns += actual.left_count + 1
                 if actual.right is not None:
                     actual = actual.right
                 else:
                     # create child node
                     child = MyAVLNode(value)
+                    child.number_of_overruns = overruns
                     # append node
                     actual.right = child
                     child.parent = actual
@@ -215,6 +220,7 @@ class MyAVL(AVL):
                 else:
                     # create child node
                     child = MyAVLNode(value)
+                    child.number_of_overruns = overruns
                     # append node
                     actual.left = child
                     child.parent = actual
