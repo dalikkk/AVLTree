@@ -276,6 +276,18 @@ def make_statistics(results):
 
 
 def make_stats(input):
+    nationalities = {}
+    for r in results:
+        nationalities[r[1]] = True
+    nations = list(nationalities)
+
+    result = {}
+    # fill result with zeros
+    for n in nations:
+        result[n] = {}
+        for nat in nations:
+            result[n][nat] = 0
+    
     i = len(input) - 1
     tree = MyAVL()
     while i >= 0:
