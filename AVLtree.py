@@ -194,7 +194,7 @@ class MyAVL(AVL):
     def push(self, value):
         self.size += 1
         if self.root is None:
-            self.root = AVLNode(value)
+            self.root = MyAVLNode(value)
             return
         actual = self.root
         child = None
@@ -204,7 +204,7 @@ class MyAVL(AVL):
                     actual = actual.right
                 else:
                     # create child node
-                    child = AVLNode(value)
+                    child = MyAVLNode(value)
                     # append node
                     actual.right = child
                     child.parent = actual
@@ -214,7 +214,7 @@ class MyAVL(AVL):
                     actual = actual.left
                 else:
                     # create child node
-                    child = AVLNode(value)
+                    child = MyAVLNode(value)
                     # append node
                     actual.left = child
                     child.parent = actual
