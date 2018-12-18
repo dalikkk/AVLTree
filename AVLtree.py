@@ -182,3 +182,55 @@ class AVL(BST):
                 self.left_rotation(actual.right)
             else:
                 actual = actual.parent
+
+class MyAVLNode(AVLNode):
+    def __init__(self):
+        super().__init__()
+
+class MyAVL(AVL):
+    def __init__(self):
+        super().__init__()
+
+    def push(self, value):
+        self.size += 1
+        if self.root is None:
+            self.root = AVLNode(value)
+            return
+        actual = self.root
+        child = None
+        while True:
+            if value > actual.value:
+                if actual.right is not None:
+                    actual = actual.right
+                else:
+                    # create child node
+                    child = AVLNode(value)
+                    # append node
+                    actual.right = child
+                    child.parent = actual
+                    break
+            else:
+                if actual.left is not None:
+                    actual = actual.left
+                else:
+                    # create child node
+                    child = AVLNode(value)
+                    # append node
+                    actual.left = child
+                    child.parent = actual
+                    break
+
+        # child can do something with counts
+        actual = child
+        while actual is not None:
+            actual.update_from_childs()
+            if actual.get_balance_factor() == 2:
+                if actual.left.get_balance_factor() == -1:
+                    self.left_rotation(actual.left.right)
+                self.right_rotation(actual.left)
+            elif actual.get_balance_factor() == -2:
+                if actual.right.get_balance_factor() == 1:
+                    self.right_rotation(actual.right.left)
+                self.left_rotation(actual.right)
+            else:
+                actual = actual.parent
