@@ -184,9 +184,9 @@ class AVL(BST):
                 actual = actual.parent
 
 class MyAVLNode(AVLNode):
-    def __init__(self):
-        super().__init__()
-        number_of_overruns = 0
+    def __init__(self, value):
+        super().__init__(value)
+        self.number_of_overruns = 0
 
 class MyAVL(AVL):
     def __init__(self):
@@ -246,3 +246,14 @@ class MyAVL(AVL):
             return 0
         return subroot.number_of_overruns + self.go_through_all(subroot.left) + self.go_through_all(subroot.right)
 
+def make_stats(input):
+    i = len(input) - 1
+    tree = MyAVL()
+    while i >= 0:
+        tree.push(input[i][0])
+        i -= 1
+    return tree.go_through_all(tree.root)
+
+if __name__ == "__main__":
+    input = [(1, 'CZ'), (9, 'FR'), (5, 'EN'), (7, 'EN'), (6, 'CZ'), (4, 'EN'), (8, 'CZ'), (2, 'CZ'), (3, 'EN')]
+    print(make_stats(input))
