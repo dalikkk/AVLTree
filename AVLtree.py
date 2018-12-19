@@ -184,34 +184,64 @@ class AVL(BST):
                 actual = actual.parent
 
 class MyAVLNode(AVLNode):
-    def __init__(self, value, nationality):
+    def __init__(self, value, nationality, nations):
         super().__init__(value)
         self.number_of_overruns = 0
         self.nationality = nationality
-        
+        self.nations = nations
+        self.nationalities_overruns = {}
+        self.nations_left = {}
+        self.nations_right = {}
+        for nat in nations:
+            self.nationalities_overruns[nat] = 0
+            self.nations_left[nat] = 0
+            self.nations_right[nat] = 0
+
+    def update_from_childs(self):
+        super().update_from_childs()
+        for nat in self.nations:
+            # erase value
+            self.nations_left[nat] = 0
+            self.nations_right[nat] = 0
+            if self.left is not None:
+                self.nations_left[nat] = self.left.nations_left[nat] + self.left.nations_right[nat]
+                if self.left.nationality == nat:
+                    self.nations_left[nat] += 1
+            if self.right is not None:
+                self.nations_right[nat] = self.right.nations_left[nat] + self.right.nations_right[nat]
+                if self.right.nationality == nat:
+                    self.nations_right[nat] += 1
 
 class MyAVL(AVL):
-    def __init__(self):
+    def __init__(self, nations):
         super().__init__()
+        self.nations = nations
 
-    def push(self, value):
+    def push(self, value, nationality):
         self.size += 1
         if self.root is None:
-            self.root = MyAVLNode(value)
+            self.root = MyAVLNode(value, nationality, self.nations)
             return
         actual = self.root
         child = None
         overruns = 0
+        nation_overruns = {}
+        for nat in self.nations:
+            nation_overruns[nat] = 0
         while True:
             if value > actual.value:
                 # add overruns
                 overruns += actual.left_count + 1
+                for nat in self.nations:
+                    nation_overruns[nat] += actual.nations_left[nat]
+                nation_overruns[actual.nationality] += 1
                 if actual.right is not None:
                     actual = actual.right
                 else:
                     # create child node
-                    child = MyAVLNode(value)
+                    child = MyAVLNode(value, nationality, self.nations)
                     child.number_of_overruns = overruns
+                    child.nationalities_overruns = nation_overruns
                     # append node
                     actual.right = child
                     child.parent = actual
@@ -221,8 +251,9 @@ class MyAVL(AVL):
                     actual = actual.left
                 else:
                     # create child node
-                    child = MyAVLNode(value)
+                    child = MyAVLNode(value, nationality, self.nations)
                     child.number_of_overruns = overruns
+                    child.nationalities_overruns = nation_overruns
                     # append node
                     actual.left = child
                     child.parent = actual
@@ -243,10 +274,12 @@ class MyAVL(AVL):
             else:
                 actual = actual.parent
 
-    def go_through_all(self, subroot):
+    def go_through_all(self, subroot, result):
         if subroot is None:
-            return 0
-        return subroot.number_of_overruns + self.go_through_all(subroot.left) + self.go_through_all(subroot.right)
+            return (0, result)
+        for nat in self.nations:
+            result[subroot.nationality][nat] += subroot.nationalities_overruns[nat]
+        return (subroot.number_of_overruns + self.go_through_all(subroot.left, result)[0] + self.go_through_all(subroot.right, result)[0], result)
 
 def make_statistics_n2(results):
     nationalities = {}
@@ -271,11 +304,13 @@ def make_statistics_n2(results):
         i += 1
     return numres, result
 def make_statistics(results):
-    return make_statistics_n2(results)
+    # if problem occured try uncomment following line
+    # return make_statistics_n2(results)
+    return make_stats(results)
 
 
-
-def make_stats(input):
+def make_stats(results):
+    """ makes statistics in n log n """
     nationalities = {}
     for r in results:
         nationalities[r[1]] = True
@@ -288,13 +323,14 @@ def make_stats(input):
         for nat in nations:
             result[n][nat] = 0
     
-    i = len(input) - 1
-    tree = MyAVL()
+    i = len(results) - 1
+    tree = MyAVL(nations)
     while i >= 0:
-        tree.push(input[i][0])
+        tree.push(results[i][0], results[i][1])
         i -= 1
-    return tree.go_through_all(tree.root)
+    return tree.go_through_all(tree.root, result)
 
 if __name__ == "__main__":
     input = [(1, 'CZ'), (9, 'FR'), (5, 'EN'), (7, 'EN'), (6, 'CZ'), (4, 'EN'), (8, 'CZ'), (2, 'CZ'), (3, 'EN')]
-    print(make_stats(input))
+    #input = [(4, 'EN'), (1, 'CZ'), (2, 'CZ'), (3, 'EN')]
+    print(make_statistics(input))
