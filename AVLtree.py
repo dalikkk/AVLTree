@@ -17,12 +17,13 @@ class BSTNode:
         self.left_count = l_count
         self.right_count = r_count
         return
-        
+
+
 class BST:
     def __init__(self):
         self.root = None
         self.size = 0
-    
+
     def push(self, value):
         self.size += 1
         if self.root is None:
@@ -58,9 +59,11 @@ class BST:
             actual.update_from_childs()
             actual = actual.parent
 
+
 class InvalidCastException(Exception):
     def __init__(self):
         super().__init__(self)
+
 
 class AVLNode(BSTNode):
     def __init__(self, value):
@@ -113,7 +116,7 @@ class AVL(BST):
         if new_subroot.parent is None:
             self.root = new_subroot
         return
-    
+
     def right_rotation(self, new_subroot):
         # check if not root
         # then cannot rotate
@@ -183,6 +186,7 @@ class AVL(BST):
             else:
                 actual = actual.parent
 
+
 class MyAVLNode(AVLNode):
     def __init__(self, value, nationality, nations):
         super().__init__(value)
@@ -204,13 +208,16 @@ class MyAVLNode(AVLNode):
             self.nations_left[nat] = 0
             self.nations_right[nat] = 0
             if self.left is not None:
-                self.nations_left[nat] = self.left.nations_left[nat] + self.left.nations_right[nat]
+                self.nations_left[nat] = self.left.nations_left[nat]\
+                                         + self.left.nations_right[nat]
                 if self.left.nationality == nat:
                     self.nations_left[nat] += 1
             if self.right is not None:
-                self.nations_right[nat] = self.right.nations_left[nat] + self.right.nations_right[nat]
+                self.nations_right[nat] = self.right.nations_left[nat]\
+                                          + self.right.nations_right[nat]
                 if self.right.nationality == nat:
                     self.nations_right[nat] += 1
+
 
 class MyAVL(AVL):
     def __init__(self, nations):
@@ -278,8 +285,14 @@ class MyAVL(AVL):
         if subroot is None:
             return (0, result)
         for nat in self.nations:
-            result[subroot.nationality][nat] += subroot.nationalities_overruns[nat]
-        return (subroot.number_of_overruns + self.go_through_all(subroot.left, result)[0] + self.go_through_all(subroot.right, result)[0], result)
+            sn = subroot.nationality
+            result[sn][nat] += subroot.nationalities_overruns[nat]
+        return (
+            subroot.number_of_overruns +
+            self.go_through_all(subroot.left, result)[0] +
+            self.go_through_all(subroot.right, result)[0],
+            result)
+
 
 def make_statistics_n2(results):
     nationalities = {}
@@ -303,6 +316,8 @@ def make_statistics_n2(results):
             j += 1
         i += 1
     return numres, result
+
+
 def make_statistics(results):
     # if problem occured try uncomment following line
     # return make_statistics_n2(results)
@@ -322,7 +337,7 @@ def make_stats(results):
         result[n] = {}
         for nat in nations:
             result[n][nat] = 0
-    
+
     i = len(results) - 1
     tree = MyAVL(nations)
     while i >= 0:
@@ -330,7 +345,17 @@ def make_stats(results):
         i -= 1
     return tree.go_through_all(tree.root, result)
 
+
 if __name__ == "__main__":
-    input = [(1, 'CZ'), (9, 'FR'), (5, 'EN'), (7, 'EN'), (6, 'CZ'), (4, 'EN'), (8, 'CZ'), (2, 'CZ'), (3, 'EN')]
-    #input = [(4, 'EN'), (1, 'CZ'), (2, 'CZ'), (3, 'EN')]
+    input = [
+        (1, 'CZ'),
+        (9, 'FR'),
+        (5, 'EN'),
+        (7, 'EN'),
+        (6, 'CZ'),
+        (4, 'EN'),
+        (8, 'CZ'),
+        (2, 'CZ'),
+        (3, 'EN')
+        ]
     print(make_statistics(input))
