@@ -326,6 +326,11 @@ def make_statistics(results):
 
 def make_stats(results):
     """ makes statistics in n log n """
+    """
+    adds runners from last to modified AVL tree (sorted by number)
+    runners at left are overruned
+    then sums values
+    """
     nationalities = {}
     for r in results:
         nationalities[r[1]] = True
